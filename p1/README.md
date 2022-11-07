@@ -2,6 +2,6 @@
 
 Contenido:
 
-* [Enunciado](./enunciado)
+* [Enunciado](./enunciado/sopsP1.pdf)
 * [Ejemplos](.)
 * [Actividades](./scripts/)
