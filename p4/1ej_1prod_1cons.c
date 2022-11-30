@@ -1,3 +1,6 @@
+/*  Un productor y un consumidor con 
+    almacén de tamaño uno.
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -12,17 +15,18 @@ void consumidor(void *p);
 
 void main()
 {
-    pthread_t hilo1, hilo2;
+    pthread_t hilo1, hilo2; //hilo productor y consumidor
     void *resp;
 
     srand(time(NULL));
 
     //inicialización de los candados
-    pthread_mutex_unlock(&c2);
-    pthread_mutex_lock(&c2);
+    pthread_mutex_unlock(&c1);  //c1 abierto.
+    pthread_mutex_lock(&c2);    //c2 cerrado.
 
-    pthread_create(&hilo2, NULL, (void *)&consumidor, (void *)NULL);
     pthread_create(&hilo1, NULL, (void *)&productor, (void *)NULL);
+    pthread_create(&hilo2, NULL, (void *)&consumidor, (void *)NULL);
+    
 
     pthread_join(hilo1, &resp);
     pthread_join(hilo2, &resp);
@@ -35,14 +39,14 @@ void productor(void *p)
 
     while (1)
     {
-        t_produccion = rand()%8 + 1;
-        producto++;
-        sleep(t_produccion);
+        t_produccion = 2;   
+        producto++;         //producción
+        sleep(t_produccion);//retardo de producción
 
         pthread_mutex_lock(&c1);
             printf("***********************************\n");
             printf("Productor almacenando %d\n",producto);
-            almacen = producto;
+            almacen = producto; //pone producto en almacén.
         pthread_mutex_unlock(&c2);
 
     }
@@ -56,14 +60,15 @@ void consumidor(void *p)
     while (1)
     {
         pthread_mutex_lock(&c2);
-            producto = almacen;
+            producto = almacen; //saca producto del almacén
+            almacen = -1;
             printf("Consumidor obteniendo %d\n", producto);
             printf("***********************************\n");
         pthread_mutex_unlock(&c1);
         
-        t_consumo = rand()%8 + 1;
-        producto=-1;
-        sleep(t_consumo);
+        t_consumo = 1; 
+        producto=-1;        //consumo
+        sleep(t_consumo);   //retardo de consumo
     }
     
 }
